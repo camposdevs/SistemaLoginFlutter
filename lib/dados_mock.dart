@@ -1,7 +1,8 @@
-List<Map<String, String>>! usuario =[
+List<Map<String, String>>  usuarios =[
   {
-    'nome':'ADM',
-    'email':'adm@email.com',
-    'senha': 'senai' 
-  }
+    'nome':"Administrador",
+    'email': 'adm@gmail.com',
+    'senha': '1234'
+  },
+  
 ];
