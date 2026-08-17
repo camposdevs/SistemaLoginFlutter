@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/home_page.dart';
+import 'package:flutter_application_1/services/api_service.dart';
 import '../dados_mock.dart';
 import 'cadastro_page.dart';
 
@@ -16,6 +17,7 @@ class _LoginPageState extends State<LoginPage>{
   final TextEditingController senhaController = TextEditingController();
 
   bool esconderSenha = true;
+  bool carregando = false;
 
   void mostrarMensagem(String mensagem){
     ScaffoldMessenger.of(context).showSnackBar(
@@ -36,37 +38,56 @@ class _LoginPageState extends State<LoginPage>{
       return;
     }
 
-    Map<String, String>? usuarioEncotrado;
+    //Map<String, String>? usuarioEncotrado;
 
-    for(var usuario in usuarios){
-       if (
-        usuario['email'] == email && 
-        usuario['senha'] == senha
-       ){
-        usuarioEncotrado = usuario;
-        break;
-       }
-    }
+    // for(var usuario in usuarios){
+    //    if (
+    //     usuario['email'] == email && 
+    //     usuario['senha'] == senha
+    //    ){
+    //     usuarioEncotrado = usuario;
+    //     break;
+    //    }
+    // }
 
-    if(usuarioEncotrado == null){
-      mostrarMensagem(
-      'Email ou senha incorretos.'
-      );
-      return;
-    }
+    setState(() {
+      carregando = true;
+    });
 
-    String nome = usuarioEncotrado['nome'] ?? 'Usuário';
+    final resultado = await ApiService.login(
+      email: email,
+      senha: senha
+    );
+
+    setState(() {
+      carregando = false;
+    });
+
+    if(resultado['sucesso'] == true){
+      final dados = resultado['dados'];
+      final usuario = dados[usuarios];
+
+      String nome = usuario['nome'] ?? 'Usuário';
+      String emailusuario = usuario['email'] ?? email;
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => HomePage(
           nomeUsuario: nome,
-          emailusuario: email
+          emailusuario: email,
         ),
       ),
     );
   }
+}
+
+    if(resultado['sucesso'] == false){
+      mostrarMensagem(
+      'Email ou senha incorretos.'
+      );
+      return;
+    }
 
   void abrirCadastro(){
     Navigator.push(
